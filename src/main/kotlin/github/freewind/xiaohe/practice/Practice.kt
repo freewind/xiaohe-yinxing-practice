@@ -59,7 +59,7 @@ class XiaoHeView : View("小鹤音形码练习") {
                 setOnKeyReleased { event ->
                     val code = this.text
                     if (code.length == 4 || event.code == KeyCode.SPACE) {
-                        showTips()
+                        checkInput(charLabel.text.single(), code)
                         this.text = ""
                     }
                 }
@@ -82,15 +82,7 @@ class XiaoHeView : View("小鹤音形码练习") {
                     }
                 }
             }
-            button("?").setOnAction { _ ->
-                title = "提示编码"
-                showTips()
-            }
         }
-    }
-
-    private fun showTips() {
-        checkInput(charLabel.text.single(), inputField.text)
     }
 
     private fun zdicUrl(char: String?) = "http://www.zdic.net/sousuo?q=${URLEncoder.encode(char, "UTF-8")}"
