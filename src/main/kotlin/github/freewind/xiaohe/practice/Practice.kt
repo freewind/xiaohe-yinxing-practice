@@ -32,6 +32,7 @@ class XiaoHeView : View("小鹤音形码练习") {
             }
             checkbox("二级字") { CharLevelSelected.level2 = this }
             checkbox("三级字") { CharLevelSelected.level3 = this }
+            spacing = 10.0
         }
         vbox {
             addClass(row)
