@@ -3,20 +3,25 @@ package github.freewind.xiaohe.practice
 import github.freewind.xiaohe.chardecoder.XiaoHeCharDecoder
 import github.freewind.xiaohe.practice.XiaoheStyle.Companion.row
 import javafx.geometry.Pos
+import javafx.scene.Node
 import javafx.scene.control.CheckBox
+import javafx.scene.control.Hyperlink
 import javafx.scene.control.Label
+import javafx.scene.control.TextField
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import tornadofx.*
 import java.io.InputStream
+import java.net.URLEncoder
 import java.util.*
 
 class XiaoHeView : View("小鹤音形码练习") {
 
     private var charLabel by singleAssign<Label>()
-    private var tipLabel by singleAssign<Label>()
+    private var inputField by singleAssign<TextField>()
+    private var tipContainer by singleAssign<Node>()
 
     private object CharLevelSelected {
         var level1 by singleAssign<CheckBox>()
@@ -40,17 +45,21 @@ class XiaoHeView : View("小鹤音形码练习") {
                 charLabel = this
                 addClass(XiaoheStyle.charLabel)
             }
-            label { tipLabel = this }
             VBox.setVgrow(this, Priority.ALWAYS)
+        }
+        hbox {
+            addClass(XiaoheStyle.row, XiaoheStyle.tipContainer)
+            tipContainer = this
         }
         hbox {
             addClass(row)
             textfield {
+                inputField = this
                 addClass(XiaoheStyle.input)
                 setOnKeyReleased { event ->
                     val code = this.text
                     if (code.length == 4 || event.code == KeyCode.SPACE) {
-                        checkInput(charLabel.text.single(), code)
+                        showTips()
                         this.text = ""
                     }
                 }
@@ -62,9 +71,33 @@ class XiaoHeView : View("小鹤音形码练习") {
         }
         hbox {
             addClass(row)
-            hyperlink("小鹤官网").setOnAction { openInBrowser("http://www.flypy.com/") }
-            hyperlink("鹤形规则详解").setOnAction { openInBrowser("http://www.flypy.com/xing.html") }
-            hyperlink("小鹤查形").setOnAction { openInBrowser("http://www.xhup.club") }
+            add(link("http://www.flypy.com/", "小鹤官网"))
+            add(link("http://www.flypy.com/xing.html", "鹤形规则详解"))
+            add(link("http://www.xhup.club", "小鹤查形"))
+            hyperlink {
+                charLabel.textProperty().addListener { _, _, char ->
+                    this.text = "汉典查看 '$char'"
+                    this.setOnAction {
+                        openInBrowser(zdicUrl(char))
+                    }
+                }
+            }
+            button("?").setOnAction { _ ->
+                title = "提示编码"
+                showTips()
+            }
+        }
+    }
+
+    private fun showTips() {
+        checkInput(charLabel.text.single(), inputField.text)
+    }
+
+    private fun zdicUrl(char: String?) = "http://www.zdic.net/sousuo?q=${URLEncoder.encode(char, "UTF-8")}"
+
+    private fun link(url: String, text: String): Hyperlink {
+        return hyperlink(text) {
+            setOnAction { openInBrowser(url) }
         }
     }
 
@@ -77,15 +110,22 @@ class XiaoHeView : View("小鹤音形码练习") {
         if (found.longestCode.equals(code, true)) {
             setNewChar()
         } else {
-            val partInfo = found.parts.map { it.name + (it.code?.let { "($it)" } ?: "") }
-            tipLabel.text = found.longestCode + ": " + partInfo
-
+            val tips = hbox {
+                label(found.longestCode)
+                found.parts.forEach {
+                    add(link(zdicUrl(it.name), it.name))
+                    if (it.code != null) {
+                        label("(${it.code}) ")
+                    }
+                }
+            }
+            tipContainer.replaceChildren(tips)
         }
     }
 
     private fun setNewChar() {
         charLabel.text = nextChar().toString()
-        tipLabel.text = ""
+        tipContainer.replaceChildren()
     }
 
     private fun nextChar(): Char {
@@ -112,6 +152,7 @@ class XiaoheStyle : Stylesheet() {
         val row by cssclass()
         val input by cssclass()
         val charLabel by cssclass()
+        val tipContainer by cssclass()
     }
 
     init {
@@ -131,6 +172,9 @@ class XiaoheStyle : Stylesheet() {
         input {
             prefWidth = 200.px
             fontSize = 40.px
+        }
+        tipContainer {
+            //            prefHeight = 30.px
         }
     }
 
