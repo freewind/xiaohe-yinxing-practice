@@ -1,9 +1,9 @@
 package github.freewind.xiaohe.practice
 
 import github.freewind.xiaohe.chardecoder.XiaoHeCharDecoder
-import github.freewind.xiaohe.chardecoder.allCharCodes
 import github.freewind.xiaohe.practice.HelloWorldStyle.Companion.row
 import javafx.geometry.Pos
+import javafx.scene.control.CheckBox
 import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
@@ -18,10 +18,24 @@ class HelloWorld : View() {
     private var charLabel by singleAssign<Label>()
     private var tipLabel by singleAssign<Label>()
 
+    private object CharLevelSelected {
+        var level1 by singleAssign<CheckBox>()
+        var level2 by singleAssign<CheckBox>()
+        var level3 by singleAssign<CheckBox>()
+    }
+
     override val root = vbox {
+        hbox {
+            checkbox("一级字") {
+                CharLevelSelected.level1 = this
+                this.isSelected = true
+            }
+            checkbox("二级字") { CharLevelSelected.level2 = this }
+            checkbox("三级字") { CharLevelSelected.level3 = this }
+        }
         vbox {
             addClass(row)
-            label("我") {
+            label {
                 charLabel = this
                 addClass(HelloWorldStyle.charLabel)
             }
@@ -46,18 +60,33 @@ class HelloWorld : View() {
         }
     }
 
+    init {
+        setNewChar()
+    }
+
     private fun checkInput(char: Char, code: String) {
         val found = XiaoHeCharDecoder.findCode(char)!!
-        if (found.code.equals(code, true)) {
-            charLabel.text = nextChar().toString()
-            tipLabel.text = ""
+        if (found.longestCode.equals(code, true)) {
+            setNewChar()
         } else {
-            tipLabel.text = found.code
+            val partInfo = found.parts.map { it.name + (it.code?.let { "($it)" } ?: "") }
+            tipLabel.text = found.longestCode + ": " + partInfo
+
         }
     }
 
+    private fun setNewChar() {
+        charLabel.text = nextChar().toString()
+        tipLabel.text = ""
+    }
+
     private fun nextChar(): Char {
-        return allCharCodes.get(Random().nextInt(allCharCodes.size)).char
+        val chars = listOf(
+                XiaoHeCharDecoder.charsLevel1 to CharLevelSelected.level1.isSelected,
+                XiaoHeCharDecoder.charsLevel2 to CharLevelSelected.level2.isSelected,
+                XiaoHeCharDecoder.charsLevel3 to CharLevelSelected.level3.isSelected
+        ).filter { it.second }.map { it.first }.flatten()
+        return chars.get(Random().nextInt(chars.size)).char
     }
 
     private fun resourceStream(path: String): InputStream? {
