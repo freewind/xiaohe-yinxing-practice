@@ -1,4 +1,3 @@
-Kotlin Hello World Demo
-=======================
+小鹤音形练习
+======
 
-Hello world from kotlin. Open it in IDE and run `Hello.kt`

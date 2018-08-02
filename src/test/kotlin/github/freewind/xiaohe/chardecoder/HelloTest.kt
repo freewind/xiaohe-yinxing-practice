@@ -1,4 +1,4 @@
-package example
+package github.freewind.xiaohe.chardecoder
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

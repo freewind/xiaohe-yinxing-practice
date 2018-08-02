@@ -1,5 +1,4 @@
 buildscript {
-    ext.kotlin_version = '1.2.51'
     repositories {
         mavenLocal()
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
@@ -7,43 +6,31 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
 
-apply plugin: 'kotlin'
+apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'com.jfrog.bintray'
-
-compileKotlin {
-    kotlinOptions.jvmTarget= "1.8"
-}
 
 repositories {
     mavenLocal()
     maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
     maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
-    maven { url 'https://dl.bintray.com/freewind/maven/' }
     jcenter()
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'no.tornado:tornadofx:1.7.16'
-    compile 'github.freewind:xiaohe-char-decoder:0.1.0'
-    compile "org.apache.commons:commons-lang3:3.7"
-    compile "commons-io:commons-io:2.6"
-    testCompile "junit:junit:4.11"
-    testCompile 'org.assertj:assertj-core:3.9.0'
-    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile 'junit:junit:4.11'
+    testCompile 'org.easytesting:fest-assert-core:2.0M10'
 }
 
 ext {
     // have to change
-    publishedGroupId = 'freewind.github'
+    publishedGroupId = 'freewind.demos'
     // `artifact` also use as and `bintray.pkg.name` for simplifying
-    artifact = 'xiaohe-yibxing-pr'
+    artifact = 'gradle-publish-to-jcenter-demo'
     libraryVersion = '0.3.0'
     // `libraryName` also uses as `bintray.pkg.libraryName` and `bintray.pkg.version.libraryName`
     libraryName = 'Gradle Publish To JCenter Demo'
