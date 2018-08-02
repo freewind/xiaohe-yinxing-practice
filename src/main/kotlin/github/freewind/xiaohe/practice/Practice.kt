@@ -1,7 +1,7 @@
 package github.freewind.xiaohe.practice
 
 import github.freewind.xiaohe.chardecoder.XiaoHeCharDecoder
-import github.freewind.xiaohe.practice.HelloWorldStyle.Companion.row
+import github.freewind.xiaohe.practice.XiaoheStyle.Companion.row
 import javafx.geometry.Pos
 import javafx.scene.control.CheckBox
 import javafx.scene.control.Label
@@ -12,11 +12,8 @@ import javafx.scene.layout.VBox
 import tornadofx.*
 import java.io.InputStream
 import java.util.*
-import com.sun.javaws.BrowserSupport.showDocument
-import javafx.application.Application
 
-
-class HelloWorld : View("小鹤音形码练习") {
+class XiaoHeView : View("小鹤音形码练习") {
 
     private var charLabel by singleAssign<Label>()
     private var tipLabel by singleAssign<Label>()
@@ -40,7 +37,7 @@ class HelloWorld : View("小鹤音形码练习") {
             addClass(row)
             label {
                 charLabel = this
-                addClass(HelloWorldStyle.charLabel)
+                addClass(XiaoheStyle.charLabel)
             }
             label { tipLabel = this }
             VBox.setVgrow(this, Priority.ALWAYS)
@@ -48,7 +45,7 @@ class HelloWorld : View("小鹤音形码练习") {
         hbox {
             addClass(row)
             textfield {
-                addClass(HelloWorldStyle.input)
+                addClass(XiaoheStyle.input)
                 setOnKeyReleased { event ->
                     val code = this.text
                     if (code.length == 4 || event.code == KeyCode.SPACE) {
@@ -109,7 +106,7 @@ class HelloWorld : View("小鹤音形码练习") {
 
 }
 
-class HelloWorldStyle : Stylesheet() {
+class XiaoheStyle : Stylesheet() {
     companion object {
         val row by cssclass()
         val input by cssclass()
@@ -138,8 +135,15 @@ class HelloWorldStyle : Stylesheet() {
 
 }
 
-class HelloWorldApp : App(HelloWorld::class, HelloWorldStyle::class)
+class XiaoHeGui : App(XiaoHeView::class, XiaoheStyle::class)
 
 fun main(args: Array<String>) {
-    launch<HelloWorldApp>()
+    launch<XiaoHeGui>()
+}
+
+object XiaoHePractice {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        launch<XiaoHeGui>()
+    }
 }

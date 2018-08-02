@@ -15,10 +15,15 @@ buildscript {
 apply plugin: 'kotlin'
 apply plugin: 'maven'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'application'
 
 compileKotlin {
     kotlinOptions.jvmTarget= "1.8"
 }
+
+mainClassName = 'github.freewind.xiaohe.practice.XiaoHePractice'
+
+defaultTasks 'run'
 
 repositories {
     mavenLocal()
