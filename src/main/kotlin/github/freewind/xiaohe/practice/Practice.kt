@@ -12,8 +12,11 @@ import javafx.scene.layout.VBox
 import tornadofx.*
 import java.io.InputStream
 import java.util.*
+import com.sun.javaws.BrowserSupport.showDocument
+import javafx.application.Application
 
-class HelloWorld : View() {
+
+class HelloWorld : View("小鹤音形码练习") {
 
     private var charLabel by singleAssign<Label>()
     private var tipLabel by singleAssign<Label>()
@@ -53,10 +56,17 @@ class HelloWorld : View() {
                         this.text = ""
                     }
                 }
+                runLater { this.requestFocus() }
             }
         }
         imageview {
             image = Image(resourceStream("hexing.png")!!)
+        }
+        hbox {
+            addClass(row)
+            hyperlink("小鹤官网").setOnAction { openInBrowser("http://www.flypy.com/") }
+            hyperlink("鹤形规则详解").setOnAction { openInBrowser("http://www.flypy.com/xing.html") }
+            hyperlink("小鹤查形").setOnAction { openInBrowser("http://www.xhup.club") }
         }
     }
 
@@ -92,6 +102,11 @@ class HelloWorld : View() {
     private fun resourceStream(path: String): InputStream? {
         return this.javaClass.classLoader.getResourceAsStream(path)
     }
+
+    private fun openInBrowser(url: String) {
+        hostServices.showDocument(url)
+    }
+
 }
 
 class HelloWorldStyle : Stylesheet() {
@@ -120,6 +135,7 @@ class HelloWorldStyle : Stylesheet() {
             fontSize = 40.px
         }
     }
+
 }
 
 class HelloWorldApp : App(HelloWorld::class, HelloWorldStyle::class)
