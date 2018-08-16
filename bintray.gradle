@@ -50,8 +50,7 @@ artifacts {
 }
 
 bintray {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    Properties properties = loadLocalProperties()
 
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
@@ -72,4 +71,16 @@ bintray {
             desc = libraryName
         }
     }
+}
+
+private Properties loadLocalProperties() {
+    Properties properties = new Properties()
+    def file = project.rootProject.file('local.properties')
+    println file
+    if (file.exists()) {
+        properties.load(file.newDataInputStream())
+    } else {
+        println("warn: no local.properties found, you can create it you want to publish to bintray")
+    }
+    properties
 }
